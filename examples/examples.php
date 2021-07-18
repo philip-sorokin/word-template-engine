@@ -8,7 +8,7 @@
  * @see        https://github.com/philip-sorokin/word-template-engine The WordTemplateEngine GitHub project
  * @see        https://addondev.com/opensource/word-template-engine The project manual
  *
- * @version    1.0
+ * @version    1.0.1
  * @author     Philip Sorokin <philip.sorokin@gmail.com>
  * @copyright  2021 - Philip Sorokin
  * @license    http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License
@@ -19,8 +19,6 @@
 /**
  * WordTemplateEngineExamples is a sample class for demonstrating WordTemplateEngine methods.
  *
- * @author   Philip Sorokin <philip.sorokin@gmail.com>
- * @see      https://addondev.com/manuals/word-template-engine The project manual
  */
 class WordTemplateEngineExamples
 {
@@ -44,7 +42,7 @@ class WordTemplateEngineExamples
 
 
 	/**
-	 * Example of variable substitution.
+	 * Example of variable replacement.
 	 *
 	 * @param    WordTemplateEngine   $template
 	 * @static
@@ -152,7 +150,7 @@ class WordTemplateEngineExamples
 
 
 	/**
-	 * Example of alternative syntax variable substitution.
+	 * Example of alternative variable syntax.
 	 *
 	 * @param    WordTemplateEngine   $template
 	 * @static
@@ -162,7 +160,7 @@ class WordTemplateEngineExamples
 	 */
 	public static function replaceAlternativeVariables(WordTemplateEngine $template): WordTemplateEngine
 	{
-		// Switch to the alternative variable syntax like ~(var_name) if you like it more, it also allows to replace the variables in links.
+		// Switch to the alternative variable syntax like ~(var_name) if you like it more, it also allows to replace the variables in hyperlinks.
 		$template->alternativeSyntax(true);
 
 		$orderInfo = [
@@ -179,7 +177,7 @@ class WordTemplateEngineExamples
 			$template->setValue($name, $value);
 		}
 
-		// Switch back to default syntax like ${var_name} if you need.
+		// Switch back to the default syntax like ${var_name} if you need.
 		$template->alternativeSyntax(false);
 
 		return $template;
@@ -187,7 +185,7 @@ class WordTemplateEngineExamples
 
 
 	/**
-	 * Example of defining the document metadata.
+	 * Example of defining document metadata.
 	 *
 	 * @param    WordTemplateEngine   $template
 	 * @static
@@ -301,8 +299,8 @@ class WordTemplateEngineExamples
 		$template = self::setDocumentInfo($template);
 
 		// Truncate the document to the first section.
-		// If you have images in removed sections, you need to remove them manually to reduce the document size.
-		// You can also copy the working section after truncating, the first only section.
+		// If you have images in removed sections, you need to remove them manually BEFORE truncating the document to reduce its size.
+		// You can also copy the working section after truncating, only the first section.
 		$template->useSection(1);
 
 		// Replace the variables AFTER copying, as we do not need to process deleted content.
@@ -325,7 +323,7 @@ class WordTemplateEngineExamples
 		$template = self::getTemplate();
 		$template = self::setDocumentInfo($template);
 
-		// Replace the variables BEFORE copying. It may be faster to replace AFTER copying, which depends on your document.
+		// Replace variables BEFORE copying. It may be faster to replace AFTER copying, which depends on your document.
 		$template = self::replaceVariables($template);
 		$template = self::replaceAlternativeVariables($template);
 
@@ -352,7 +350,7 @@ class WordTemplateEngineExamples
 		// Make one copy of the first section and append it to the end of the document.
 		$template->repeat(1, 1);
 
-		// Replace the variables AFTER copying. It may be faster to replace BEFORE copying, which depends on your document.
+		// Replace variables AFTER copying. It may be faster to replace BEFORE copying, which depends on your document.
 		$template = self::replaceVariables($template);
 		$template = self::replaceAlternativeVariables($template);
 
@@ -361,7 +359,7 @@ class WordTemplateEngineExamples
 
 
 	/**
-	 * Example of deleting an image and outputting the document in different formats.
+	 * Example of deleting an image and outputting a document in different formats.
 	 *
 	 * @param   string   $format
 	 * @static
@@ -436,7 +434,7 @@ class WordTemplateEngineExamples
 
 
 	/**
-	 * Example of creating the HTML document adapted to email and mailing it to a reciever.
+	 * Example of creating an HTML document adapted to email and mailing it to a reciever.
 	 *
 	 * @param   string   $from   Sender email.
 	 * @param   string   $to     Reciever email.
@@ -462,8 +460,8 @@ class WordTemplateEngineExamples
 
 		$imageDirUrl = 'http://' . $_SERVER['HTTP_HOST'] . str_replace('//', '/', str_replace($_SERVER['DOCUMENT_ROOT'], '/', dirname(__FILE__))) . '/img_samples/';
 
-		// Set images instead of placeholders. We trim the document images, because they can be invalid for the mail. We replace them with a HTML comment.
-		// You can also use the template variables and replace them with HTML elements, but AFTER generating the HTML document.
+		// Set images instead of placeholders. We remove the document images, because they can be invalid for the mail. We replace them with HTML comments.
+		// You can also replace the comments and variables them with HTML elements, but AFTER generating the HTML document.
 		$contents = str_ireplace('<!--[image_1]-->', '<img src="' . $imageDirUrl . 'logo.png" />', $contents);
 		$contents = str_ireplace('<!--[image_2]-->', '<img src="' . $imageDirUrl . 'jd_signature.png" style="width: 107px; height: 32px;" widht="107" height="32" />', $contents);
 
@@ -474,7 +472,7 @@ class WordTemplateEngineExamples
 			'From: Your company <' . $from . '>',
 		];
 
-		// Mail example function.
+		// Example of mail function.
 		mail($to, 'Invoice A19583', $contents, implode("\r\n", $headers));
 	}
 
@@ -508,7 +506,8 @@ class WordTemplateEngineExamples
 	 */
 	public static function errorHandler(string $errorText, string $errorStatus): void
 	{
-		echo sprintf('Error processing using custom error handler. Error status: <b>%s</b>, error text: <b>%s</b>', $errorStatus, $errorText);
+		printf('Error processing using custom error handler. Error status: <b>%s</b>, error text: <b>%s</b>', $errorStatus, $errorText);
+		
 		exit;
 	}
 }
