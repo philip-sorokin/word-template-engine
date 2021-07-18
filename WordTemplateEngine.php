@@ -8,7 +8,7 @@
  * @see        https://github.com/philip-sorokin/word-template-engine The WordTemplateEngine GitHub project
  * @see        https://addondev.com/opensource/word-template-engine The project manual
  *
- * @version    1.0
+ * @version    1.0.1
  * @author     Philip Sorokin <philip.sorokin@gmail.com>
  * @copyright  2021 - Philip Sorokin
  * @license    http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License
@@ -180,21 +180,21 @@ class WordTemplateEngine
 	protected $blipsMap = [];
 
 	/**
-	 * The anchor character in a variable.
+	 * The anchor character of a variable.
 	 *
 	 * @var   string
 	 */
 	protected $anchor_char = '$';
 
 	/**
-	 * The open character in a variable.
+	 * The open character of a variable.
 	 *
 	 * @var   string
 	 */
 	protected $open_char = '{';
 
 	/**
-	 * The close character in a variable.
+	 * The close character of a variable.
 	 *
 	 * @var   string
 	 */
@@ -362,7 +362,7 @@ class WordTemplateEngine
 
 
 	/**
-	 * The locale that is set before conversion a .docx template into other formats. Default is 'C.UTF-8'.
+	 * The locale that is set before conversion the .docx template into other formats. Default is 'C.UTF-8'.
 	 *
 	 * @param   string   $locale   UNIX locale.
 	 *
@@ -390,7 +390,7 @@ class WordTemplateEngine
 
 
 	/**
-	 * Call this method with a FALSE parameter before outputting the document if you want to send your own HTTP headers.
+	 * Call this method with the FALSE parameter before outputting the document if you want to send your own HTTP headers.
 	 *
 	 * @param   bool   $bool
 	 *
@@ -404,7 +404,7 @@ class WordTemplateEngine
 
 
 	/**
-	 * Method to embed a custom stylesheet into the HEAD section of a document converted into HTML or XHTML format.
+	 * Method to embed a custom stylesheet into the HEAD section of the document that is to be converted into HTML or XHTML format.
 	 *
 	 * @param   string   $stylesheet
 	 *
@@ -418,7 +418,7 @@ class WordTemplateEngine
 
 
 	/**
-	 * Method to embed a custom script into the HEAD section of a document converted into HTML or XHTML format.
+	 * Method to embed a custom script into the HEAD section of a document that is to be converted into HTML or XHTML format.
 	 *
 	 * @param   string   $script
 	 *
@@ -432,7 +432,7 @@ class WordTemplateEngine
 
 
 	/**
-	 * Method to append an external stylesheet into the HEAD section of a document converted into HTML or XHTML format.
+	 * Method to append an external stylesheet into the HEAD section of a document that is to be converted into HTML or XHTML format.
 	 *
 	 * @param   string   $url
 	 *
@@ -446,7 +446,7 @@ class WordTemplateEngine
 
 
 	/**
-	 * Method to append an external script into the HEAD section of a document converted into HTML or XHTML format.
+	 * Method to append an external script into the HEAD section of a document that is to be converted into HTML or XHTML format.
 	 *
 	 * @param   string   $url
 	 *
@@ -635,7 +635,7 @@ class WordTemplateEngine
 
 	/**
 	 * Remove all the sections in the template except the section with an index passed as the argument. This method truncates the document to the certain section.
-	 * Note! It must be called before or after (preferably) any replacements, because the document paragraphs and rows are cached for better performance.
+	 * Note! It must be called before any replacements, because the document paragraphs and rows are cached for better performance.
 	 * Note! If you use page breaks inside a section, the next page must begin with a paragraph. Otherwise, the document can be broken.
 	 *
 	 * @param   int   $idx   The section index.
@@ -684,7 +684,7 @@ class WordTemplateEngine
 
 	/**
 	 * Copy the document one or several times. If the second argument is passed, it creates only a section copy and appends it to the end of the document.
-	 * Note! It must be called before or after (preferably) any replacements, because the document paragraphs and rows are cached for better performance.
+	 * Note! It must be called before or after any replacements, because the document paragraphs and rows are cached for better performance. The call order depends on your document.
 	 *
 	 * @param   int   $cnt   Optional. How many copies are created. Default 1.
 	 * @param   int   $idx   Optional. Repeat only one section.
@@ -804,7 +804,7 @@ class WordTemplateEngine
 				$working = [];
 				$processed = 0;
 
-				$texts = $paragraph->getElementsByTagNameNS($this->namespace, 't');
+				$texts = $this->getElements($paragraph, 'w:t');
 				$textContent = '';
 
 				foreach($texts as $text)
@@ -866,11 +866,10 @@ class WordTemplateEngine
 
 
 	/**
-	 * Method to clone a table row with a refference. An integer counter followed by '#' is appended to the names of all variables inside the row including the refference.
-	 * E.g. you have a reference variable: ${key} and other variables inside the row: ${customer}, ${order_id}.
-	 * They are replaced with: ${key#1}, ${customer#1}, ${order_id#1}; ${key#2}, ${customer#2}, ${order_id#2} etc.
+	 * Method to clone a table row with an anchor. An integer counter followed by '#' is appended to the names of all variables inside the row including the anchor.
+	 * E.g. you have an anchor variable: ${key} and other variables inside the row: ${customer}, ${order_id}, they are replaced with: ${key#1}, ${customer#1}, ${order_id#1}; ${key#2}, ${customer#2}, ${order_id#2} etc.
 	 *
-	 * @param   string   $varName   The reference variable.
+	 * @param   string   $varName   The anchor variable.
 	 * @param   int      $cnt       How many rows you need.
 	 *
 	 * @return  void
@@ -907,7 +906,7 @@ class WordTemplateEngine
 
 	/**
 	 * Call this method before replacements to use alternative variable syntax ~(name) instead of default ${name}. You can also switch back to default syntax.
-	 * Use the alternative syntax to replace the variables in links and other targets.
+	 * Use the alternative syntax to replace the variables inside hyperlinks and other targets.
 	 *
 	 * @param   bool   $bool   Whether to use alternative variable syntax.
 	 *
@@ -923,7 +922,7 @@ class WordTemplateEngine
 
 
 	/**
-	 * Replace an image with another file.
+	 * Replace an image in the document with another image.
 	 *
 	 * @param   int      $imageID       An image id according to the Word enumerator.
 	 * @param   string   $replacement   The path of a new image.
@@ -992,7 +991,7 @@ class WordTemplateEngine
 	/**
 	 * Creates a document from the processed template.
 	 *
-	 * @param   string   $destination   The destination path. Can be full or relative, e.g. /var/www/newdoc.docx, newdoc.pdf. The root of a relative path is the temporary directory. 
+	 * @param   string   $destination   The destination path. Can be full or relative, e.g. '/var/www/newdoc.docx', 'newdoc.pdf'. The root of a relative path is the temporary directory.
 	 * @param   string   $format        Optional. The document format: 'docx' (default), 'pdf', 'html', 'xhtml', 'mail' (HTML adapted to email).
 	 *
 	 * @return  string   The full path to the created document.
@@ -1397,8 +1396,41 @@ class WordTemplateEngine
 
 
 	/**
+	 * Super fast replacer of native DOM getElementsByTagName method.
+	 *
+	 * @param    DOMNode   $parent   Parent node.
+	 * @param    string       $tagName  Tag name.
+	 *
+	 * @return   array   List of elements.
+	 *
+	 */
+	protected function getElements(DOMNode $parent, string $tagName): array
+	{
+		$elements = [];
+		
+		if ($element = $parent->firstChild)
+		{
+			do {
+				
+				if (isset($element->tagName) && ($tagName === '*' || $element->tagName === $tagName))
+				{
+					$elements[] = $element;
+				}
+				
+				if ($element->childNodes->length && ($tagName === '*' || $element->tagName !== $tagName))
+				{					
+					$elements = array_merge($elements, $this->getElements($element, $tagName));
+				}
+				
+			} while ($element = $element->nextSibling);
+		}
+		
+		return $elements;
+	}
+
+
+	/**
 	 * Iterate the document to fetch indexed arrays with rows and paragraphs containing variables.
-	 * We do not use DOMDocument::getElementsByTagName for general selections, as it's 40 times slower.
 	 *
 	 * @param    int     $mode  The parser mode. 1 is paragraphs selector, 2 is rows selector.
 	 *
@@ -1427,7 +1459,7 @@ class WordTemplateEngine
 						}
 						else
 						{
-							$elements = $element->getElementsByTagNameNS($this->namespace, 'p');
+							$elements = $this->getElements($element, 'w:p');
 						}
 
 						foreach($elements as $item)
@@ -1521,7 +1553,7 @@ class WordTemplateEngine
 	 */
 	protected function replaceRowVariables(DOMElement $row, int $num): void
 	{
-		$texts = $row->getElementsByTagNameNS($this->namespace, 't');
+		$texts = $this->getElements($row, 'w:t');
 
 		$start = null;
 		$open = null;
@@ -1608,7 +1640,7 @@ class WordTemplateEngine
 		$classesMap = [];
 		$idsMap = [];
 
-		$nodes = $html->getElementsByTagName('*');
+		$nodes = $this->getElements($html, '*');
 
 		foreach($nodes as $element)
 		{
