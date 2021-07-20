@@ -8,7 +8,7 @@
  * @see        https://github.com/philip-sorokin/word-template-engine The WordTemplateEngine GitHub project
  * @see        https://addondev.com/opensource/word-template-engine The project manual
  *
- * @version    1.0.1
+ * @version    1.0.2
  * @author     Philip Sorokin <philip.sorokin@gmail.com>
  * @copyright  2021 - Philip Sorokin
  * @license    http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License
@@ -32,7 +32,7 @@ class WordTemplateEngineExamples
 	 */
 	public static function getTemplate(): WordTemplateEngine
 	{
-		$templatePath = __DIR__ . '/template.docx';
+		$templatePath = __DIR__ . DIRECTORY_SEPARATOR . 'template.docx';
 
 		$tmpDir_optional = $_SERVER['DOCUMENT_ROOT'];
 		$errorHandler_optional  = [__CLASS__, 'self::errorHandler'];
@@ -280,7 +280,7 @@ class WordTemplateEngineExamples
 		$template = self::setDocumentInfo($template);
 
 		// Use the full path outside the working directory.
-		$template->save($_SERVER['DOCUMENT_ROOT'] . "/Invoice A19583.$format", $format);
+		$template->save($_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . "Invoice A19583.$format", $format);
 	}
 
 
@@ -398,7 +398,7 @@ class WordTemplateEngineExamples
 		$template = self::replaceAlternativeVariables($template);
 
 		// The path of a new image.
-		$new_img_path = dirname(__FILE__) . '/img_samples/xx_signature.png';
+		$new_img_path = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'img_samples' . DIRECTORY_SEPARATOR . 'xx_signature.png';
 
 		// Refer to an image id according to the Word enumerator.
 		$template->replaceImage(2, $new_img_path);
@@ -458,10 +458,11 @@ class WordTemplateEngineExamples
 
 		$contents = file_get_contents($path);
 
-		$imageDirUrl = 'http://' . $_SERVER['HTTP_HOST'] . str_replace('//', '/', str_replace($_SERVER['DOCUMENT_ROOT'], '/', dirname(__FILE__))) . '/img_samples/';
+		$path = preg_replace('#^[/\\\]+#', '', str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__))) . '/img_samples/';
+		$imageDirUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/' . $path;
 
 		// Set images instead of placeholders. We remove the document images, because they can be invalid for the mail. We replace them with HTML comments.
-		// You can also replace the comments and variables them with HTML elements, but AFTER generating the HTML document.
+		// You can also replace the comments and variables with HTML elements, but AFTER generating the HTML document.
 		$contents = str_ireplace('<!--[image_1]-->', '<img src="' . $imageDirUrl . 'logo.png" />', $contents);
 		$contents = str_ireplace('<!--[image_2]-->', '<img src="' . $imageDirUrl . 'jd_signature.png" style="width: 107px; height: 32px;" widht="107" height="32" />', $contents);
 
@@ -495,7 +496,7 @@ class WordTemplateEngineExamples
 
 
 	/**
-	 * Customer error handler example.
+	 * Custom error handler example.
 	 *
 	 * @param    string   $errorText
 	 * @param    string   $errorStatus
