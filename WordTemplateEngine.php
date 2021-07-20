@@ -8,7 +8,7 @@
  * @see        https://github.com/philip-sorokin/word-template-engine The WordTemplateEngine GitHub project
  * @see        https://addondev.com/opensource/word-template-engine The project manual
  *
- * @version    1.0.1
+ * @version    1.0.2
  * @author     Philip Sorokin <philip.sorokin@gmail.com>
  * @copyright  2021 - Philip Sorokin
  * @license    http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License
@@ -220,7 +220,7 @@ class WordTemplateEngine
 
 		if (version_compare(PHP_VERSION, '7.1', '<'))
 		{
-			$this->raiseError("You have to use PHP version not lower 7.1 to run WordTemplateEngine.", 'php_version_error');
+			$this->raiseError("You have to use PHP version 7.1 or higher to run WordTemplateEngine.", 'php_version_error');
 		}
 
 		$base = basename($template);
@@ -230,11 +230,11 @@ class WordTemplateEngine
 			$this->raiseError("Template '$base' not found.", 'template_not_found');
 		}
 
-		$this->tmpDir = implode('/', array_filter([$tmp_path, 'temp_wte'])) . '/';
+		$this->tmpDir = implode(DIRECTORY_SEPARATOR, array_filter([$tmp_path, 'temp_wte'])) . DIRECTORY_SEPARATOR;
 		$this->clean();
 		mkdir($this->tmpDir);
 
-		$this->docDir = $this->tmpDir . 'doc/';
+		$this->docDir = $this->tmpDir . 'doc' . DIRECTORY_SEPARATOR;
 		mkdir($this->docDir);
 
 		$bin = $this->docDir . $base;
@@ -261,7 +261,7 @@ class WordTemplateEngine
 		foreach($types->getElementsByTagName('Override') as $override)
 		{
 			$type = preg_replace('#^.+?\.([^.+]+)[^.]*$#', '$1', $override->getAttribute('ContentType'));
-			$path = $this->docDir . preg_replace('#^/#', '', $override->getAttribute('PartName'));
+			$path = $this->docDir . preg_replace('#^[/\\\]#', '', $override->getAttribute('PartName'));
 
 			if ($type === 'main')
 			{
@@ -313,7 +313,7 @@ class WordTemplateEngine
 				$base = basename($item->baseURI);
 				$dir = dirname($item->baseURI);
 
-				if (file_exists($file = "$dir/_$relExt/$base.$relExt"))
+				if (file_exists($file = $dir . DIRECTORY_SEPARATOR . "_$relExt" . DIRECTORY_SEPARATOR . $base . ".$relExt"))
 				{
 					$doc = new DOMDocument();
 					$doc->load($file);
@@ -943,7 +943,7 @@ class WordTemplateEngine
 			{
 				if ($rel = $this->relsElements[$base][$blipID] ?? null)
 				{
-					$original = $this->docDir . 'word/' . $rel->getAttribute('Target');
+					$original = $this->docDir . 'word' . DIRECTORY_SEPARATOR . $rel->getAttribute('Target');
 
 					copy($replacement, $original);
 				}
@@ -971,7 +971,7 @@ class WordTemplateEngine
 					$target = $rel->getAttribute('Target');
 					$rel->parentNode->removeChild($rel);
 
-					if (file_exists($file = $this->docDir . 'word/' . $target))
+					if (file_exists($file = $this->docDir . 'word' . DIRECTORY_SEPARATOR . $target))
 					{
 						unlink($file);
 					}
@@ -1006,7 +1006,12 @@ class WordTemplateEngine
 			$this->raiseError("Unsupported format '$format'.", 'unsupported_format');
 		}
 
-		if (mb_strpos($destination, '/') === false && mb_strpos($destination, '\\') === false)
+		if (empty($destination))
+		{
+			$this->raiseError("The destination path cannot be empty.", 'empty_destination');
+		}
+
+		if (mb_strpos($destination, '/') !== 0 && mb_strpos($destination, '\\') !== 0)
 		{
 			$destination = $this->tmpDir . $destination;
 		}
@@ -1053,12 +1058,12 @@ class WordTemplateEngine
 
 			if (is_dir($file) === true)
 			{
-				$zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
+				$zip->addEmptyDir(str_replace($source . DIRECTORY_SEPARATOR, '', $file . DIRECTORY_SEPARATOR));
 			}
 
 			else if (is_file($file) === true)
 			{
-				$zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
+				$zip->addFromString(str_replace($source . DIRECTORY_SEPARATOR, '', $file), file_get_contents($file));
 			}
 		}
 
@@ -1068,14 +1073,14 @@ class WordTemplateEngine
 		{
 			if (!function_exists('exec'))
 			{
-				$this->raiseError("You have to enable 'exec' function for convertation from WORD to " . strtoupper($format) . ".", 'exec_function_disabled');
+				$this->raiseError("You have to enable 'exec' function for conversion from WORD to " . strtoupper($format) . ".", 'exec_function_disabled');
 			}
 
 			exec('dpkg-query -l libreoffice', $output, $status);
 
 			if ($status)
 			{
-				$this->raiseError("You have to install LibreOffice package for convertation from WORD to " . strtoupper($format) . ".", 'libreoffice_not_installed');
+				$this->raiseError("You have to install LibreOffice package for conversion from WORD to " . strtoupper($format) . ".", 'libreoffice_not_installed');
 			}
 
 			$convert_to = [$format === 'pdf' ? $format : 'html'];
@@ -1407,24 +1412,24 @@ class WordTemplateEngine
 	protected function getElements(DOMNode $parent, string $tagName): array
 	{
 		$elements = [];
-		
+
 		if ($element = $parent->firstChild)
 		{
 			do {
-				
+
 				if (isset($element->tagName) && ($tagName === '*' || $element->tagName === $tagName))
 				{
 					$elements[] = $element;
 				}
-				
+
 				if ($element->childNodes->length && ($tagName === '*' || $element->tagName !== $tagName))
 				{					
 					$elements = array_merge($elements, $this->getElements($element, $tagName));
 				}
-				
+
 			} while ($element = $element->nextSibling);
 		}
-		
+
 		return $elements;
 	}
 
