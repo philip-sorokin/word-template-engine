@@ -9,3 +9,7 @@ Documentation and examples: https://addondev.com/opensource/word-template-engine
 ### [1.0.1] - 2021-07-19
 
 - Improved performance of processing large documents. More than 1000 variable replacements take a few seconds. Reduced memory and CPU usage. Speed increased by 6-8 times.
+
+### [Unreleased]
+
+- Fixed directory separators caused issues on Windows platform.
