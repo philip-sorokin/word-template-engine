@@ -13,3 +13,4 @@ Documentation and examples: https://addondev.com/opensource/word-template-engine
 ### [Unreleased]
 
 - Fixed directory separators caused issues on Windows platform.
+- Generation of unique temporary subdirectory to resolve potential multiuser conflicts.
