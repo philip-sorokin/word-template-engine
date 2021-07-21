@@ -1011,7 +1011,7 @@ class WordTemplateEngine
 			$this->raiseError("The destination path cannot be empty.", 'empty_destination');
 		}
 
-		if (mb_strpos($destination, '/') !== 0 && mb_strpos($destination, '\\') !== 0)
+		if (mb_strpos($destination, '/') !== 0 && mb_strpos($destination, '\\') !== 0 && mb_strpos($destination, ':') === false)
 		{
 			$destination = $this->tmpDir . $destination;
 		}
