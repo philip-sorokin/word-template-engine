@@ -230,8 +230,7 @@ class WordTemplateEngine
 			$this->raiseError("Template '$base' not found.", 'template_not_found');
 		}
 
-		$this->tmpDir = implode(DIRECTORY_SEPARATOR, array_filter([$tmp_path, 'temp_wte'])) . DIRECTORY_SEPARATOR;
-		$this->clean();
+		$this->tmpDir = implode(DIRECTORY_SEPARATOR, array_filter([$tmp_path, 'temp_wte_' . md5(time() . rand(0, 1000000))])) . DIRECTORY_SEPARATOR;
 		mkdir($this->tmpDir);
 
 		$this->docDir = $this->tmpDir . 'doc' . DIRECTORY_SEPARATOR;
