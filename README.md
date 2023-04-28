@@ -14,3 +14,7 @@ Documentation and examples: https://addondev.com/opensource/word-template-engine
 
 - Fixed directory separators caused issues on Windows platform.
 - Generation of unique temporary subdirectory to resolve potential multiuser conflicts.
+
+### [1.0.3] - 2023-04-28
+
+- Fixed broken titles/headers in Safari browser when outputting a file.
