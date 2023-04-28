@@ -1204,7 +1204,7 @@ class WordTemplateEngine
 
 				if ($fileName)
 				{
-					$headers[2] .= '; filename="' . $fileName . '"';
+					$headers[2] .= '; filename="' . $filename . '";' . "filename*=utf-8''" . rawurlencode($fileName) . ';';
 				}
 			}
 			else
