@@ -8,7 +8,7 @@
  * @see        https://github.com/philip-sorokin/word-template-engine The WordTemplateEngine GitHub project
  * @see        https://addondev.com/opensource/word-template-engine The project manual
  *
- * @version    1.0.2
+ * @version    1.0.3
  * @author     Philip Sorokin <philip.sorokin@gmail.com>
  * @copyright  2021 - Philip Sorokin
  * @license    http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License
@@ -1204,7 +1204,7 @@ class WordTemplateEngine
 
 				if ($fileName)
 				{
-					$headers[2] .= '; filename="' . $filename . '";' . "filename*=utf-8''" . rawurlencode($fileName) . ';';
+					$headers[2] .= '; filename="' . $fileName . '";' . "filename*=utf-8''" . rawurlencode($fileName) . ';';
 				}
 			}
 			else
